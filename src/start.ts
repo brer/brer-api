@@ -10,16 +10,15 @@ const closeListeners = closeWithGrace(
     delay: 30000,
     logger: fastify.log,
   },
-  async ({ err, manual, signal }: Record<string, any>) => {
-    if (err !== undefined) {
+  async ({ err, signal }: Record<string, any>) => {
+    if (err) {
       fastify.log.error({ err }, 'closing because of error')
-    }
-    if (manual !== undefined) {
+    } else if (signal) {
+      fastify.log.info({ signal }, 'received signal')
+    } else {
       fastify.log.info('application closed manually')
     }
-    if (signal !== undefined) {
-      fastify.log.info({ signal }, 'received signal')
-    }
+
     await fastify.close()
   },
 )

@@ -35,6 +35,10 @@ export interface Fn extends BrerDocument {
    */
   retries?: number
   /**
+   * Timeout in seconds since Invocation reaching the `running` status.
+   */
+  timeout?: number
+  /**
    * Kubernetes resources configuration.
    */
   resources?: FnResources

@@ -36,28 +36,31 @@ export default (): RouteOptions<RouteGeneric> => ({
     const { store } = this
     const { body, params, session } = request
 
-    const invocation = await store.invocations
+    const oldInvocation = await store.invocations
       .find(getDocumentId('invocation', params.invocationUlid))
       .unwrap()
 
-    if (!invocation) {
+    if (!oldInvocation) {
       return reply.code(404).error({ message: 'Invocation not found.' })
     }
-    if (session.token.subject !== invocation.pod) {
+    if (session.token.subject !== oldInvocation.pod) {
       return reply.code(403).error()
     }
-    if (invocation.status !== 'running') {
+    if (
+      oldInvocation.status !== 'initializing' &&
+      oldInvocation.status !== 'running'
+    ) {
       return reply.code(422).error({ message: 'Invalid Invocation status.' })
     }
 
-    await store.invocations
-      .from(invocation)
+    const newInvocation = await store.invocations
+      .from(oldInvocation)
       .update(doc =>
         pushLogPage(doc, Buffer.from(body, 'utf-8'), params.pageIndex),
       )
       .unwrap()
 
-    reply.header('etag', invocation._rev)
+    reply.header('etag', newInvocation._rev)
     return reply.code(204).send()
   },
 })

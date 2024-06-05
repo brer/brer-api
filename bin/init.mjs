@@ -56,47 +56,46 @@ await pushDocument(dbFunctions, {
   },
 })
 
+const invocationPriority = `
+    var priority = -1
+    if (doc.runtimeTest) {
+      if (doc.status !== 'completed' && doc.status !== 'failed') {
+        priority = 2
+      }
+    } else if (doc.status === 'completed' || doc.status === 'failed') {
+      priority = 0
+    } else {
+      priority = 1
+    }
+`
+
 const listInvocations = `
   function (doc) {
-    emit(
-      [
-        doc.status === 'completed' || doc.status === 'failed'
-          ? 0
-          : 1,
-        doc.createdAt
-      ],
-      null
-    )
+    ${invocationPriority}
+
+    if (priority >= 0) {
+      emit([priority, doc.createdAt], null)
+    }
   }
 `
 
 const listInvocationsByFunction = `
   function (doc) {
-    emit(
-      [
-        doc.functionName,
-        doc.status === 'completed' || doc.status === 'failed'
-          ? 0
-          : 1,
-        doc.createdAt
-      ],
-      null
-    )
+    ${invocationPriority}
+
+    if (priority >= 0) {
+      emit([doc.functionName, priority, doc.createdAt], null)
+    }
   }
 `
 
 const listInvocationsByProject = `
   function (doc) {
-    emit(
-      [
-        doc.project,
-        doc.status === 'completed' || doc.status === 'failed'
-          ? 0
-          : 1,
-        doc.createdAt
-      ],
-      null
-    )
+    ${invocationPriority}
+
+    if (priority >= 0) {
+      emit([doc.project, priority, doc.createdAt], null)
+    }
   }
 `
 

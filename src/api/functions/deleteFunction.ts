@@ -41,9 +41,9 @@ export default (): RouteOptions<RouteGeneric> => ({
     await store.invocations
       .filter({
         _design: 'default',
-        _view: 'list',
-        startkey: [MIN_KEY, fn.name, fn.project],
-        endkey: [MAX_KEY, fn.name, fn.project],
+        _view: 'list_by_function',
+        startkey: [fn.name, MIN_KEY, MIN_KEY],
+        endkey: [fn.name, MAX_KEY, MAX_KEY],
       })
       .delete()
       .tap(doc => log.debug({ invocationUlid: doc.ulid }, 'delete invocation'))

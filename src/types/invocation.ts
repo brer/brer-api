@@ -49,6 +49,10 @@ export interface Invocation extends BrerDocument {
    */
   runtimeTest?: boolean
   /**
+   * Timeout in seconds since `running` status.
+   */
+  timeout?: number
+  /**
    * Allowed resources.
    */
   resources?: FnResources

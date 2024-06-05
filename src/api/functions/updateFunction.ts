@@ -27,6 +27,7 @@ export interface RouteGeneric {
     historyLimit?: number
     sequential?: boolean
     retries?: number
+    timeout?: number
     resources?: {
       requests?: {
         cpu?: string
@@ -106,6 +107,7 @@ export default (): RouteOptions<RouteGeneric> => ({
       .prop('historyLimit', S.integer().minimum(0).default(10))
       .prop('sequential', S.boolean().default(false))
       .prop('retries', S.integer().minimum(0).maximum(10).default(0))
+      .prop('timeout', S.integer().minimum(0))
       .prop(
         'resources',
         S.object()
@@ -218,6 +220,7 @@ export default (): RouteOptions<RouteGeneric> => ({
             limits: body.resources?.limits,
           },
           retries: body.retries,
+          timeout: body.timeout,
           sequential: body.sequential,
         }),
       )

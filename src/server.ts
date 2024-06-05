@@ -31,7 +31,7 @@ export default function createServer() {
     logger: {
       level: process.env.LOG_LEVEL || 'debug',
       transport:
-        process.env.LOG_PRETTY === 'enable'
+        process.env.LOG_PRETTY === 'enable' && !process.env.LOG_FILE
           ? {
               target: 'pino-pretty',
               options: {

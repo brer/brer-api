@@ -30,7 +30,7 @@ export default (): RouteOptions<RouteGeneric> => ({
   },
   async handler(request, reply) {
     const { store } = this
-    const { params, session } = request
+    const { headers, params, session } = request
 
     const invocation = await store.invocations
       .find(getDocumentId('invocation', params.invocationUlid))
@@ -40,8 +40,6 @@ export default (): RouteOptions<RouteGeneric> => ({
       return reply.code(404).error({ message: 'Invocation not found.' })
     }
 
-    request.log.warn({ session })
-
     const authorized =
       session.token.issuer === TokenIssuer.INVOKER
         ? session.token.subject === invocation.pod
@@ -49,6 +47,9 @@ export default (): RouteOptions<RouteGeneric> => ({
 
     if (!authorized) {
       return reply.code(403).error()
+    }
+    if (headers['if-match'] && headers['if-match'] !== invocation._rev) {
+      return reply.code(410).error()
     }
 
     reply.header('etag', invocation._rev)

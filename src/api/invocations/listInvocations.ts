@@ -100,9 +100,9 @@ export default (): RouteOptions<RouteGeneric> => ({
     let endkey_docid: any
 
     let minStatus = 0
-    let maxStatus = 1
+    let maxStatus = 2
     if (query.status === 'active') {
-      minStatus = 1
+      minStatus = 2
     } else if (query.status === 'inactive') {
       maxStatus = 0
     }

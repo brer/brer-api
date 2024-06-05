@@ -26,6 +26,7 @@ export type UpdateFunctionOptions = Pick<
   | 'resources'
   | 'retries'
   | 'sequential'
+  | 'timeout'
 >
 
 export function updateFunction(fn: Fn, options: UpdateFunctionOptions): Fn {

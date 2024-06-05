@@ -59,6 +59,7 @@ function v1Function() {
     )
     .prop('historyLimit', S.integer())
     .prop('timeout', S.integer().minimum(0))
+    .description('Timeout in seconds since running status.')
     .prop('resources', resources())
     .description('Job resources configuration.')
     .prop('createdAt', S.string().format('date-time'))
@@ -122,6 +123,10 @@ function v1Invocation() {
     .description('Progress or completition result value.')
     .prop('reason')
     .description('Failure reason.')
+    .prop('runtimeTest', S.boolean())
+    .description("This Invocation is testing its Function's image.")
+    .prop('timeout', S.integer().minimum(0))
+    .description('Timeout in seconds since running status.')
     .prop(
       'env',
       S.array()
